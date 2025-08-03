@@ -1,0 +1,28 @@
+#editor-container {
+    position: relative;
+    margin: 4rem auto;
+    max-width: 60ch;
+
+}
+
+.editor {
+    border-radius: 0.5rem;
+    transition: 0.5s outline ease;
+}
+
+.editor:focus {
+    outline: none;
+}
+
+
+.editor-placeholder {
+    position: absolute;
+    inset: 0;
+    color: hsl(0, 0%, 65%);
+    pointer-events: none;
+}
+
+input::-webkit-calendar-picker-indicator {
+  display: none !important;
+}
+

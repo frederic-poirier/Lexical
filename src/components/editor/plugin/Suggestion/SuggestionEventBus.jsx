@@ -1,0 +1,59 @@
+import { useState, useEffect } from 'react'
+
+class SuggestionEventBus extends EventTarget {
+    constructor() {
+        super();
+        this.currentState = {
+            isVisible: false,
+            query: '',
+            nodeKey: null,
+            ghostText: '',
+            list: [],
+            index: null,
+            fail: null,
+        };
+    }
+
+    emit(eventName, data) {
+        this.dispatchEvent(new CustomEvent(eventName, { detail: data }))
+    }
+
+    on(eventName, callback) {
+        this.addEventListener(eventName, callback)
+        return () => this.removeEventListener(eventName, callback);
+    }
+
+    updateState(updates) {
+        const oldState = { ...this.currentState };
+        this.currentState = { ...this.currentState, ...updates };
+        this.emit('state-changed', {
+            oldState, newState: this.currentState
+        });
+    }
+
+    getState() {
+        return { ...this.currentState };
+    }
+
+    emitRemove() {
+        this.emit('remove', null);
+    }
+
+    emitReplace() {
+        this.emit('replace', null);
+    }
+}
+
+export const suggestionBus = new SuggestionEventBus();
+
+export function useSuggestionBus(selector) {
+    const [state, setState] = useState(() => suggestionBus.getState());
+    useEffect(() => {
+        const handleStateChange = (event) => {
+            setState(event.detail.newState);
+        }
+        const cleanup = suggestionBus.on('state-changed', handleStateChange);
+        return cleanup;
+    }, [])
+    return selector ? selector(state) : state;
+}
