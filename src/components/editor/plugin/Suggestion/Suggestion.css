@@ -6,7 +6,8 @@
     anchor-name: --suggestion;    
 
     display: inline-block;
-    font-style: italic;
+    background-color: var(--clr-background-300);
+    padding: 0rem 0.15rem;
 }
 
 .suggestion-node::after {
@@ -24,7 +25,8 @@
 
     background-color: var(--clr-background-300);
     border-radius: 0.5rem;
-    border: 1px solid var(--clr-border-subtle);
+    border: 1px solid var(--clr-);
+    box-shadow: rgba(17, 12, 46, 0.05) 0px 48px 100px 0px;
 
 
     opacity: 1;
@@ -51,14 +53,14 @@
 
 
         li {
-            padding: 0.25rem 0.5rem;
+            padding: 0.25rem;
             border-radius: 0.25rem;
         }
 
         li.selected,
         li:hover {
             background-color: var(--clr-background-600);
-            outline: 1px solid var(--clr-border);
+            outline: 1px solid var(--clr-border-subtle);
         }
     }
 

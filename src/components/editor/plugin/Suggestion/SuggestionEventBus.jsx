@@ -26,6 +26,15 @@ class SuggestionEventBus extends EventTarget {
     updateState(updates) {
         const oldState = { ...this.currentState };
         this.currentState = { ...this.currentState, ...updates };
+
+        if (this.currentState.query !== undefined && this.currentState.query !== oldState.query) {
+            this.emit('query-changed');
+        }
+
+        if (this.currentState.index !== undefined && this.currentState.index !== oldState.index) {
+            this.emit('index-changed');
+        }
+
         this.emit('state-changed', {
             oldState, newState: this.currentState
         });

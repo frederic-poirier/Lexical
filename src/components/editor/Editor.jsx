@@ -6,7 +6,7 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin'
 import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
 import { SuggestionPlugin } from './plugin/Suggestion/SuggestionPlugin'
 import { SuggestionNode } from './plugin/Suggestion/SuggestionNode'
-import  SuggestionComponent  from './plugin/Suggestion/SuggestionComponent'
+import SuggestionComponent from './plugin/Suggestion/SuggestionComponent'
 
 const theme = {
     suggestionNode: 'text-suggestion-node',
@@ -41,6 +41,7 @@ export default function Editor() {
                 />
                 <SuggestionPlugin trigger='/' />
                 <HistoryPlugin />
+                
             </LexicalComposer>
             <SuggestionComponent />
         </div>

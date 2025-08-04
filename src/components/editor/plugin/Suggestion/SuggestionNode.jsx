@@ -1,4 +1,4 @@
-import { TextNode } from 'lexical';
+import { TextNode, $createTextNode } from 'lexical';
 
 export class SuggestionNode extends TextNode {
 
@@ -41,25 +41,23 @@ export class SuggestionNode extends TextNode {
     return didUpdate;
   }
 
-  static importJSON(serializedNode) {
-    // Pour un node temporaire, on peut retourner null ou un TextNode normal
-    const { text } = serializedNode;
-    return new TextNode(text);
-  }
-
-  isInert() {
-    return true; // Indique que ce node ne doit pas affecter l'historique
-  }
-
   exportJSON() {
     return {
       ...super.exportJSON(),
-      type: 'text', // Exporter comme TextNode normal pour éviter la persistance
-      text: this.__text,
+      type: 'text', // Force l'export comme TextNode
+      text: this.__text, // Seulement le texte visible
     };
   }
 
-  // Méthode utilitaire pour vérifier si c'est un SuggestionNode
+  static importJSON(serializedNode) {
+    const { text } = serializedNode;
+    return $createTextNode(text);
+  }
+
+  static isInlineNode() {
+    return true;
+  }
+
   static $isSuggestionNode(node) {
     return node instanceof SuggestionNode;
   }
