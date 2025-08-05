@@ -1,5 +1,6 @@
 import { useSuggestionBus, suggestionBus } from './SuggestionEventBus'
 import { useEffect, useRef } from 'react';
+import CommandConfig from './SuggestionConfig';
 
 export default function SuggestionComponent() {
     const { isVisible, index, list, query } = useSuggestionBus();

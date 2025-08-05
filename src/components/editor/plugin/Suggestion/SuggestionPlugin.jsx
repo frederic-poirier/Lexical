@@ -18,20 +18,20 @@ import { SuggestionNode } from './SuggestionNode';
 import { suggestionBus, useSuggestionBus } from './SuggestionEventBus';
 import './Suggestion.css'
 
-const suggestions = ['Title', 'Paragraph', 'Unoredered list', 'Ordered list', 'Block quote', 'Block code', 'Pinterest board'];
-
-
 // SuggestionPlugin enregistre les hooks nécessaires au fonctionnement du système de suggestion.
 // Il initialise les raccourcis clavier (`useKeyboardCommands`), les transformations sur le node (`useNodeTransforms`)
 // et les gestionnaires d’événements/mutations (`useEventHandlers`).
 
-export function SuggestionPlugin({ trigger = '/', CommandConfig = {} }) {
+export function SuggestionPlugin({ CommandConfig = {} }) {
     const [editor] = useLexicalComposerContext();
     const { isVisible } = useSuggestionBus();
 
-    useKeyboardCommands(editor, trigger, isVisible);
-    useNodeTransforms(editor, trigger)
-    useEventHandlers(editor, trigger);
+
+    console.log(CommandConfig)
+
+    useKeyboardCommands(editor, CommandConfig, isVisible);
+    useNodeTransforms(editor)
+    useEventHandlers(editor, CommandConfig);
 
     return null;
 }
@@ -59,12 +59,12 @@ export function SuggestionPlugin({ trigger = '/', CommandConfig = {} }) {
 //    Chaque changement déclenche un événement 'index-changed' qui met à jour le ghost text.
 
 
-function useKeyboardCommands(editor, trigger, isVisible) {
+function useKeyboardCommands(editor, CommandConfig, isVisible) {
     useEffect(() => {
         const unregistrerTrigger = editor.registerCommand(
             KEY_DOWN_COMMAND,
             (event) => {
-                if (event.key !== trigger || (event.key === trigger && (event.shiftKey || event.ctrlKey || event.metaKey))) return false;
+                if (CommandConfig[event.key] === undefined) return false;
 
                 editor.update(() => {
                     const selection = $getSelection();
@@ -79,7 +79,7 @@ function useKeyboardCommands(editor, trigger, isVisible) {
                     if (offset !== 0 && text[offset] && text[offset] !== ' ') return;
 
                     event.preventDefault();
-                    const suggestionNode = new SuggestionNode(trigger, undefined, '');
+                    const suggestionNode = new SuggestionNode(event.key, event.key, undefined, '');
                     selection.insertNodes([suggestionNode])
                     suggestionNode.select()
                 });
@@ -110,7 +110,7 @@ function useKeyboardCommands(editor, trigger, isVisible) {
                 if (state.list && state.index !== null) {
                     e.preventDefault();
                     editor.update(() => {
-                        state.currentNode.setTextContent(trigger + state.list[state.index]);
+                        state.currentNode.setTextContent(state.currentTrigger + state.list[state.index]);
                         state.currentNode.selectEnd();
                     });
                     return true;
@@ -176,7 +176,7 @@ function useKeyboardCommands(editor, trigger, isVisible) {
             unregistrerDown();
             unregistrerUp();
         }
-    }, [editor, isVisible, trigger]);
+    }, [editor, isVisible, CommandConfig]);
 
 }
 
@@ -187,22 +187,22 @@ function useKeyboardCommands(editor, trigger, isVisible) {
 // - que le nombre d’échecs successifs (`fail`) n’excède pas un seuil (ici 5), auquel cas le node est aussi supprimé.
 
 
-function useNodeTransforms(editor, trigger) {
+function useNodeTransforms(editor) {
     useEffect(() => {
         return editor.registerNodeTransform(SuggestionNode, (node) => {
             const content = node.getTextContent();
             const currentState = suggestionBus.getState();
-            if (!content.startsWith(trigger)) return suggestionBus.emitReplace();
+            if (!content.startsWith(node.getTrigger())) return suggestionBus.emitReplace();
             if (currentState.fail >= 5) return suggestionBus.emitReplace();
-        }, [editor, trigger]);
+        }, [editor]);
     })
 }
 
 
-function useEventHandlers(editor, trigger) {
+function useEventHandlers(editor, CommandConfig) {
     const updateGhostText = useGhostTextHandler(editor);
     useSuggestionEventListeners(editor, updateGhostText);
-    useSuggestionMutationObserver(editor, trigger, updateGhostText);
+    useSuggestionMutationObserver(editor, CommandConfig, updateGhostText);
 }
 
 
@@ -215,21 +215,24 @@ function useEventHandlers(editor, trigger) {
 
 
 function useGhostTextHandler(editor) {
+
     editor.update(() => {
         const state = suggestionBus.getState();
-        const placeholder = 'filter';
+        const placeholder = state.placeholder;
 
         if (!state.nodeKey) return;
         const lexicalNode = $getNodeByKey(state.nodeKey);
-        if (!SuggestionNode.$isSuggestionNode(lexicalNode)) return;
+        if (!SuggestionNode.$isSuggestionNode(lexicalNode || !state.ghostTextEnabled)) return;
 
         const query = state.query;
         const list = state.list;
         const index = state.index;
 
+
+
         let newGhostText = '';
         if (query.length === 0 && index === null) newGhostText = placeholder
-        else newGhostText = list[index]?.slice(query.length)
+        else if (list.length > 0 && index !== null) newGhostText = list[index]?.slice(query.length)
 
         if (lexicalNode.getGhostText() !== newGhostText) {
             lexicalNode.setGhostText(newGhostText);
@@ -305,7 +308,7 @@ function useSuggestionEventListeners(editor, updateGhostText) {
 //       Cela limite les mises à jour inutiles.
 //     - L’index est remis à 0 si l’ancien n’est plus valide, ou laissé inchangé si encore pertinent.
 
-function useSuggestionMutationObserver(editor, trigger, updateGhostText) {
+function useSuggestionMutationObserver(editor, CommandConfig, updateGhostText) {
     useEffect(() => {
         const cleanup = editor.registerMutationListener(SuggestionNode, (mutations) => {
             for (const [nodeKey, mutation] of mutations.entries()) {
@@ -318,6 +321,11 @@ function useSuggestionMutationObserver(editor, trigger, updateGhostText) {
                     const node = $getNodeByKey(nodeKey);
                     if (!SuggestionNode.$isSuggestionNode(node)) return;
 
+                    const trigger = node.getTrigger();
+                    const triggerConfig = CommandConfig[trigger]
+
+                    if (!triggerConfig) return;
+
                     const content = node.getTextContent();
                     const query = content.slice(trigger.length);
                     const currentState = suggestionBus.getState();
@@ -325,10 +333,13 @@ function useSuggestionMutationObserver(editor, trigger, updateGhostText) {
                     if (mutation === 'created') {
                         const domElement = editor.getElementByKey(nodeKey);
                         const rect = domElement?.getBoundingClientRect() ?? null;
-                        const list = query.length
-                            ? suggestions.filter(word =>
-                                word.toLowerCase().startsWith(query.toLowerCase()))
-                            : suggestions;
+                        const filteredIndices = triggerConfig.suggestions
+                            .map((suggestion, index) => ({ suggestion, index }))
+                            .filter(({ suggestion }) =>
+                                query.length === 0 ||
+                                suggestion.label.toLowerCase().startsWith(query.toLowerCase())
+                            )
+                            .map(({ index }) => index);
 
                         suggestionBus.updateState({
                             isVisible: true,
@@ -336,31 +347,39 @@ function useSuggestionMutationObserver(editor, trigger, updateGhostText) {
                             nodeKey,
                             currentNode: node,
                             rect,
-                            list,
+                            filteredIndices,
+                            placeholder: triggerConfig.placeholder,
+                            ghostTextEnabled: triggerConfig.ghostText,
                             index: null,
                             fail: 0
                         });
-                        editor.update(updateGhostText);
+                        editor.update(() => updateGhostText);
                     }
 
                     if (mutation === 'updated') {
                         if (query === currentState.query) return;
 
-                        const filteredSuggestions = suggestions.filter(word =>
-                            word.toLowerCase().startsWith(query.toLowerCase()));
-                        const hasResults = filteredSuggestions.length > 0;
+                        const filteredIndices = triggerConfig.suggestions
+                            .map((suggestion, index) => ({ suggestion, index }))
+                            .filter(({ suggestion }) =>
+                                query.length === 0 ||
+                                suggestion.label.toLowerCase().startsWith(query.toLowerCase())
+                            )
+                            .map(({ index }) => index);
+
+                        const hasResults = filteredIndices.length > 0;
                         const newFail = hasResults ? 0 : currentState.fail + 1;
 
                         let newIndex;
                         if (!hasResults || query.length === 0) newIndex = null;
-                        else if ((currentState.index === null && query.length > 0) || currentState.index >= filteredSuggestions.length) {
+                        else if ((currentState.index === null && query.length > 0) || currentState.index >= filteredIndices.length) {
                             newIndex = 0;
                         } else newIndex = currentState.index;
 
                         suggestionBus.updateState({
                             isVisible: true,
                             query,
-                            list: filteredSuggestions,
+                            filteredIndices,
                             index: newIndex,
                             fail: newFail,
                         });
@@ -370,5 +389,5 @@ function useSuggestionMutationObserver(editor, trigger, updateGhostText) {
         });
 
         return cleanup;
-    }, [editor, trigger, updateGhostText]);
+    }, [editor, CommandConfig, updateGhostText]);
 }

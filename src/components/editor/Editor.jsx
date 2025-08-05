@@ -7,6 +7,7 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
 import { SuggestionPlugin } from './plugin/Suggestion/SuggestionPlugin'
 import { SuggestionNode } from './plugin/Suggestion/SuggestionNode'
 import SuggestionComponent from './plugin/Suggestion/SuggestionComponent'
+import CommandConfig from './plugin/Suggestion/SuggestionConfig' 
 
 const theme = {
     suggestionNode: 'text-suggestion-node',
@@ -39,7 +40,7 @@ export default function Editor() {
                     }
                     ErrorBoundary={LexicalErrorBoundary}
                 />
-                <SuggestionPlugin trigger='/' />
+                <SuggestionPlugin CommandConfig={CommandConfig} />
                 <HistoryPlugin />
                 
             </LexicalComposer>

@@ -7,12 +7,17 @@ export class SuggestionNode extends TextNode {
   }
 
   static clone(node) {
-    return new SuggestionNode(node.__text, node.__key, node.__ghostText);
+    return new SuggestionNode(node.__trigger, node.__text, node.__key, node.__ghostText);
   }
 
-  constructor(text, key, ghostText = '') {
+  constructor(trigger, text, key, ghostText = '') {
     super(text, key);
     this.__ghostText = ghostText;
+    this.__trigger = trigger;
+  }
+
+  getTrigger() {
+    return this.__trigger;
   }
 
   setGhostText(text) {
