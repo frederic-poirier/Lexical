@@ -34,6 +34,7 @@ export class SuggestionNode extends TextNode {
   createDOM(config) {
     const span = super.createDOM(config);
     span.dataset.ghost = this.__ghostText;
+    span.dataset.trigger = this.__trigger;
     span.classList.add('suggestion-node');
     return span;
   }

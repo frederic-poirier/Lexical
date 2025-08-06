@@ -1,5 +1,12 @@
-import Editor from "./components/editor/Editor";
+import Editor from "./editor/Editor";
+import Header from './components/Header'
 
 export default function App() {
-  return <Editor />
+  return (
+    <>
+      <Header />
+      <Editor />
+    </>
+  )
+
 }

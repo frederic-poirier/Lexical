@@ -1,7 +1,7 @@
 #editor-container {
     position: relative;
-    margin: 4rem auto;
-    max-width: 60ch;
+    margin: 3rem auto;
+    width: min(60ch, calc(100% - 2rem));
 
 }
 

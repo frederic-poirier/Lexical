@@ -5,12 +5,11 @@ class SuggestionEventBus extends EventTarget {
         super();
         this.currentState = {
             isVisible: false,
+            nodeKey: '',
             query: '',
-            nodeKey: null,
-            ghostText: '',
-            list: [],
             index: null,
-            fail: null,
+            indices: [],
+            fail: 0
         };
     }
 
