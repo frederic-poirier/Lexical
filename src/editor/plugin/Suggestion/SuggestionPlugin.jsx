@@ -266,9 +266,7 @@ function useSuggestionEventListeners(editor, updateGhostText) {
     useEffect(() => {
         const handleRemove = () => {
             editor.update(() => {
-                const selection = $getSelection();
-                if (!$isRangeSelection(selection) || !selection.isCollapsed()) return;
-                const node = selection.anchor.getNode();
+                const node = $getNodeByKey(suggestionBus.getState().nodeKey);
                 if (SuggestionNode.$isSuggestionNode(node)) {
                     node.remove();
                     suggestionBus.updateState({ isVisible: false });
@@ -278,9 +276,7 @@ function useSuggestionEventListeners(editor, updateGhostText) {
 
         const handleReplace = () => {
             editor.update(() => {
-                const selection = $getSelection();
-                if (!$isRangeSelection(selection) || !selection.isCollapsed()) return;
-                const node = selection.anchor.getNode();
+                const node = $getNodeByKey(suggestionBus.getState().nodeKey);
                 if (SuggestionNode.$isSuggestionNode(node)) {
                     const textNode = $createTextNode(node.getTextContent());
                     node.replace(textNode);
@@ -326,6 +322,7 @@ function useSuggestionMutationObserver(editor, CommandConfig) {
     useEffect(() => {
         const cleanup = editor.registerMutationListener(SuggestionNode, (mutations) => {
             for (const [nodeKey, mutation] of mutations.entries()) {
+
                 if (mutation === 'destroyed') {
                     suggestionBus.updateState({ isVisible: false });
                     return;
@@ -356,7 +353,6 @@ function useSuggestionMutationObserver(editor, CommandConfig) {
                             fail: 0
                         });
 
-                        console.log(suggestionBus.getState())
                     }
 
                     if (mutation === 'updated') {
@@ -365,7 +361,15 @@ function useSuggestionMutationObserver(editor, CommandConfig) {
                         const indices = getFilteredSuggestions(CommandConfig, query, currentState.trigger)
 
                         const hasResults = indices.length > 0;
-                        const newFail = hasResults ? 0 : currentState.fail + 1;
+                        const isInsertion = query.length > currentState.query.length;
+                        let newFail;
+
+                        if (hasResults) newFail = 0;
+                        else if (isInsertion) newFail = currentState.fail + 1;
+                        else newFail = Math.max(0, currentState.fail - 1);
+
+
+                        console.log(newFail)
 
                         let newIndex;
                         if (!hasResults || query.length === 0) newIndex = null;
@@ -373,13 +377,22 @@ function useSuggestionMutationObserver(editor, CommandConfig) {
                             newIndex = 0;
                         } else newIndex = currentState.index;
 
-                        suggestionBus.updateState({
-                            isVisible: true,
-                            query,
-                            indices,
-                            index: newIndex,
-                            fail: newFail,
-                        });
+                        const hasChanged = (
+                            currentState.query !== query ||
+                            currentState.index !== newIndex ||
+                            currentState.fail !== newFail ||
+                            !arraysEqual(currentState.indices, indices)
+                        );
+
+                        if (hasChanged) {
+                            suggestionBus.updateState({
+                                isVisible: true,
+                                query,
+                                indices,
+                                index: newIndex,
+                                fail: newFail,
+                            });
+                        }
                     }
                 });
             }
@@ -403,4 +416,9 @@ function getFilteredSuggestions(CommandConfig, query, trigger) {
         : triggerConfig.suggestions.map((_, index) => ({ index }));
 
     return filtered.map(item => item.index);
+}
+
+function arraysEqual(a, b) {
+    if (a.length !== b.length) return false;
+    return a.every((val, i) => val === b[i]);
 }

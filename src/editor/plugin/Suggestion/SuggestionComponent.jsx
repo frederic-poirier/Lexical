@@ -73,8 +73,8 @@ const SuggestionItem = memo(({ suggestion, isSelected }) => {
 
     return (
         <div className={`suggestion-item ${isSelected ? 'selected' : ''}`}>
-            <span className='suggestion-icon'><IconComponent size={16} /></span>
             <span className="suggestion-label">{suggestion.label}</span>
+            <span className='suggestion-icon'><IconComponent size={16} /></span>
             {suggestion.description && (
                 <span className="suggestion-description">
                     {suggestion.description}

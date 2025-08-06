@@ -21,7 +21,8 @@
 
     margin-block: 0.25rem;
 
-    background-color: var(--clr-background-300);
+    background-color: hsla(from var(--clr-background-300) h s l / 0.8);
+    backdrop-filter: blur(16px);
     border-radius: 0.5rem;
     border: 1px solid var(--clr-border);
     box-shadow: rgba(17, 12, 46, 0.05) 0px 48px 100px 0px;
@@ -37,16 +38,7 @@
         overflow-y: auto;
 
         scrollbar-width: thin;
-        scrollbar-color: var(--clr-background-900) var(--clr-background-300);
-
-        &::after {
-            content: '';
-            height: 1rem;
-            width: 100%;
-            background: linear-gradient(to bottom, transparent, var(--clr-background-300));
-            position: sticky;
-            bottom: 0;
-        }
+        scrollbar-color: var(--clr-background-900) transparent;
     }
 
     @starting-style {
@@ -64,21 +56,23 @@
     .suggestion-category-group {
         padding: 0.25rem;
 
-
         &:not(:last-child) {
-            border-bottom: 1px solid var(--clr-border);
+            border-bottom: 1px solid var(--clr-border-subtle);
+            padding-bottom: 0.5rem;
         }
+
+
 
         .suggestion-category-header {
             color: var(--clr-text-subtle);
-            padding: 0.25rem;
-            font-size: 0.875rem;
+            padding: 0.5rem 0.25rem;
             text-transform: capitalize;
+            font-size: 0.875rem;
         }
 
 
         .suggestion-item {
-            padding: 0.25rem;
+            padding: 0.5rem;
             border-radius: 0.25rem;
             display: grid;
             grid-template-columns: fit-content(2rem) auto;
@@ -88,19 +82,23 @@
 
         .suggestion-icon {
             grid-column: 1;
-            grid-row: 1 / span 2;
+            grid-row: 1;
             display: flex;
-            background-color: var(--clr-background-900);
-            aspect-ratio: 1;
             height: 100%;
             align-items: center;
             justify-content: center;
             border-radius: 0.25rem;
 
+            svg {
+                color: var(--clr-text-subtle);
+            }
+
         }
 
         .suggestion-label {
             grid-column: 2;
+            text-transform: capitalize;
+            font-size: 0.875rem;
         }
 
         .suggestion-description {
@@ -112,7 +110,11 @@
         .suggestion-item.selected,
         .suggestion-item:hover {
             background-color: var(--clr-background-600);
-            outline: 1px solid var(--clr-border-subtle);
+            outline: 1px solid var(--clr-border);
+
+            .suggestion-icon svg {
+                color: var(--clr-text);
+            }
         }
     }
 
