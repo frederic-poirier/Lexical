@@ -67,7 +67,7 @@
     padding: 0.5rem;
 
     scrollbar-width: thin;
-    scrollbar-color: var(--clr-background-900) transparent;
+    scrollbar-color: var(--clr-background-300) transparent;
 }
 
 .abbreviation-list {
@@ -85,12 +85,12 @@
     padding: 0.25rem;
 }
 
+
 /* Inputs */
 .abbreviation-input {
     background: none;
     border: none;
     color: var(--clr-text);
-    font-size: 0.875rem;
     transition: all 0.1s ease-in-out;
     width: 100%;
 }
@@ -100,7 +100,7 @@
 .abbreviation-input-short {
     font-family: var(--font-mono, monospace);
     color: var(--clr-text-subtle);
-    width: 4.5ch;
+    width: 7ch;
 }
 
 .abbreviation-item-icon {
@@ -123,7 +123,7 @@ input:focus {
 /* Boutons */
 .abbreviation-btn {
     background: none;
-    color: white;
+    color: var(--clr-text);
     border: none;
     border-radius: 0.25rem;
     font-size: 0.75rem;
