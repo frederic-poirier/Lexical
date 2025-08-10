@@ -7,7 +7,9 @@ import { HistoryPlugin } from '@lexical/react/LexicalHistoryPlugin'
 import { SuggestionPlugin } from './plugin/Suggestion/SuggestionPlugin'
 import { SuggestionNode } from './plugin/Suggestion/SuggestionNode'
 import SuggestionComponent from './plugin/Suggestion/SuggestionComponent'
-import CommandConfig from './plugin/Suggestion/SuggestionConfig' 
+import CommandConfig from './plugin/Suggestion/SuggestionConfig'
+import AbreviationPlugin from './plugin/ABVR/AbreviationPlugin'
+import AbreviationComponent from './plugin/ABVR/AbreviationComponent'
 
 const theme = {
     suggestionNode: 'text-suggestion-node',
@@ -25,26 +27,30 @@ export default function Editor() {
     }
 
     return (
-        <div id='editor-container'>
-            <LexicalComposer initialConfig={initialConfig}>
-                <RichTextPlugin
-                    contentEditable={
-                        <ContentEditable
-                            className='editor'
-                            placeholder={
-                                <div className='editor-placeholder'>
-                                    Type here
-                                </div>
-                            }
-                        />
-                    }
-                    ErrorBoundary={LexicalErrorBoundary}
-                />
-                <SuggestionPlugin CommandConfig={CommandConfig} />
-                <HistoryPlugin />
-                
-            </LexicalComposer>
-            <SuggestionComponent />
-        </div>
+        <>
+            <div id='editor-container'>
+                <LexicalComposer initialConfig={initialConfig}>
+                    <RichTextPlugin
+                        contentEditable={
+                            <ContentEditable
+                                className='editor'
+                                placeholder={
+                                    <div className='editor-placeholder'>
+                                        Type here
+                                    </div>
+                                }
+                            />
+                        }
+                        ErrorBoundary={LexicalErrorBoundary}
+                    />
+                    <SuggestionPlugin CommandConfig={CommandConfig} />
+                    <HistoryPlugin />
+                    <AbreviationPlugin  />
+                    
+                </LexicalComposer>
+                <SuggestionComponent />
+            </div>
+        </>
+
     )
 }

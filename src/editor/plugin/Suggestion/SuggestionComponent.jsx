@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, } from 'react';
 import { useSuggestionBus } from './SuggestionEventBus'
 import CommandConfig from './SuggestionConfig';
 
@@ -74,13 +74,10 @@ const SuggestionItem = memo(({ suggestion, isSelected }) => {
     return (
         <div className={`suggestion-item ${isSelected ? 'selected' : ''}`}>
             <span className="suggestion-label">{suggestion.label}</span>
-            <span className='suggestion-icon'><IconComponent size={16} /></span>
-            {suggestion.description && (
-                <span className="suggestion-description">
-                    {suggestion.description}
-                </span>
-            )}
+            <span className='suggestion-icon'><IconComponent size={14} /></span>
         </div>
     );
 });
+
+
 

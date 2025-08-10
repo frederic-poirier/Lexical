@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { MdSettings } from "react-icons/md";
-import "./AbreviationComponent.css";
+import "./Abreviation.css";
 
 const STORAGE_KEY = 'dictionnaire-abreviations';
 
@@ -38,6 +38,9 @@ export default function AbreviationComponent() {
         setDictionnaire(nouvelleDictionnaire);
         const obj = Object.fromEntries(nouvelleDictionnaire);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(obj));
+        
+        // Notifier les autres composants (comme le plugin) du changement
+        window.dispatchEvent(new CustomEvent('abbreviation-dictionary-updated'));
     };
 
     // Ajouter ou modifier une abréviation
@@ -139,6 +142,7 @@ const AbreviationInput = ({ short = '', full = '', onSave, onDelete }) => {
                 type="text" 
                 placeholder="abvr" 
                 value={shortValue}
+                maxLength={4}
                 onChange={(e) => setShortValue(e.target.value)}
                 onKeyPress={handleKeyPress}
                 className="abbreviation-input abbreviation-input-short"

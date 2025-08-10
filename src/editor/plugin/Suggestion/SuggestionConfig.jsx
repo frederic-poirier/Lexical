@@ -14,7 +14,7 @@ import {
   TrendingUp, TrendingDown, BarChart3, PieChart, Activity,
   Award, Medal, Trophy, Gamepad2, Puzzle, Lightbulb,
   Rocket, Palette, Brush, Scissors, Ruler, Grid,
-  Layout, Sidebar, Menu, MoreHorizontal, Plus, Minus as MinusIcon
+  Layout, Sidebar, Menu, MoreHorizontal, MessageCircleOff , Plus, Minus as MinusIcon
 } from 'lucide-react';
 
 const CommandConfig = {

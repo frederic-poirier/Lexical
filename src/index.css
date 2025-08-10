@@ -1,5 +1,7 @@
 /* 1. Use a more-intuitive box-sizing model */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
@@ -23,18 +25,31 @@ body {
 }
 
 /* 6. Improve media defaults */
-img, picture, video, canvas, svg {
+img,
+picture,
+video,
+canvas,
+svg {
   display: block;
   max-width: 100%;
 }
 
 /* 7. Inherit fonts for form controls */
-input, button, textarea, select {
+input,
+button,
+textarea,
+select {
   font: inherit;
 }
 
 /* 8. Avoid text overflows */
-p, h1, h2, h3, h4, h5, h6 {
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   overflow-wrap: break-word;
 }
 
@@ -42,47 +57,53 @@ p, h1, h2, h3, h4, h5, h6 {
 p {
   text-wrap: pretty;
 }
-h1, h2, h3, h4, h5, h6 {
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   text-wrap: balance;
 }
 
 /* 10. Create a root stacking context */
-#root, #__next {
+#root,
+#__next {
   isolation: isolate;
 }
 
-:root {
-  font-family: Inter, sans-serif;
-  font-feature-settings: "liga" 1, "calt" 1;
+@font-face {
+  font-family: 'Season';
+  src: url(assets/SeasonVFTRIALVF.woff2);
+}
 
+:root {
+  font-family: 'Season';
+  font-variation-settings: 'SERF' 0;
   --font-mono: 'JetBrains Mono', monospace;
 
-    --clr-background: hsl(0, 0%, 95%);
-    --clr-background-300: hsl(0, 0%, 100%);
-    --clr-background-600: hsl(0, 0%, 95%);
-    --clr-background-900: hsl(0, 0%, 90%);
-    --clr-text: hsl(0, 0%, 10%);
-    --clr-text-subtle: hsl(0, 0%, 60%);
-    --clr-border: hsl(0, 0%, 85%);
-    --clr-border-subtle: hsl(0, 0%, 90%)
+  --clr-background: hsl(0, 0%, 95%);
+  --clr-background-300: hsl(0, 0%, 100%);
+  --clr-background-600: hsl(0, 0%, 95%);
+  --clr-background-900: hsl(0, 0%, 90%);
+  --clr-text: hsl(0, 0%, 10%);
+  --clr-text-subtle: hsl(0, 0%, 60%);
+  --clr-border: hsl(0, 0%, 85%);
+  --clr-border-subtle: hsl(0, 0%, 90%)
 }
 
-@supports (font-variation-settings: normal) {
-  :root {
-    font-family: InterVariable, sans-serif;
-  }
-}
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --clr-background: hsl(0, 0%, 10%);
+    --clr-background: hsl(0, 0%, 8%);
     --clr-background-300: hsl(0, 0%, 15%);
     --clr-background-600: hsl(0, 0%, 20%);
     --clr-background-900: hsl(0, 0%, 25%);
     --clr-text: hsl(0, 0%, 90%);
     --clr-text-subtle: hsl(0, 0%, 60%);
-    --clr-border: hsl(0, 0%, 25%);
-    --clr-border-subtle: hsl(0, 0%, 20%)
+    --clr-border: hsl(0, 0%, 18%);
+    --clr-border-subtle: hsl(0, 0%, 11%);
   }
 }
 
@@ -91,11 +112,18 @@ body {
   color: var(--clr-text);
 }
 
-#root > nav {
+#root>nav {
   margin: 0 auto;
-  border: 1px solid var(--clr-border-subtle);
+  border-bottom: 1px solid var(--clr-border-subtle);
   padding: 0.5rem;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  font-size: 1.25rem;
+
+  h1 {
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    font-size: 1.25rem;
+  }
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }

@@ -17,7 +17,6 @@ import {
 import { SuggestionNode } from './SuggestionNode';
 import { suggestionBus, useSuggestionBus } from './SuggestionEventBus';
 import './Suggestion.css'
-import CommandConfig from './SuggestionConfig';
 
 // SuggestionPlugin enregistre les hooks nécessaires au fonctionnement du système de suggestion.
 // Il initialise les raccourcis clavier (`useKeyboardCommands`), les transformations sur le node (`useNodeTransforms`)

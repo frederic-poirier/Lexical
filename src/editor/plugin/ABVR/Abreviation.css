@@ -1,0 +1,171 @@
+/* Bouton de déclenchement */
+.abbreviation-trigger {
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: none;
+    background-color: transparent;
+    margin-left: auto;
+    color: var(--clr-text);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.1s ease-in-out;
+}
+
+.abbreviation-trigger:hover {
+    background-color: var(--clr-background-300);
+}
+
+/* Panel principal */
+.abbreviation-panel {
+    position: absolute;
+    top: 3rem;
+    right: 1rem;
+    z-index: 50;
+
+    background-color: var(--clr-background-300);
+    border-radius: 0.5rem;
+    border: 1px solid var(--clr-border);
+    box-shadow: rgba(17, 12, 46, 0.05) 0px 48px 100px 0px;
+
+    width: min(400px, 90vw);
+    max-height: 400px;
+    opacity: 1;
+    transform: scale(1);
+    outline: 4px solid var(--clr-border-subtle);
+    transition: 0.1s ease-in-out;
+    transition-behavior: allow-discrete;
+}
+
+@starting-style {
+    .abbreviation-panel {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+}
+
+/* Header */
+.abbreviation-header {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--clr-border);
+    display: flex;
+    align-items: center;
+}
+
+.abbreviation-header h3 {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--clr-text);
+    text-transform: capitalize;
+}
+
+/* Main content */
+.abbreviation-main {
+    overflow-y: auto;
+    padding: 0.5rem;
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--clr-background-900) transparent;
+}
+
+.abbreviation-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Items d'abréviation */
+.abbreviation-item {
+    display: flex;
+    align-items: center;
+    padding: 0.25rem;
+}
+
+/* Inputs */
+.abbreviation-input {
+    background: none;
+    border: none;
+    color: var(--clr-text);
+    font-size: 0.875rem;
+    transition: all 0.1s ease-in-out;
+    width: 100%;
+}
+
+
+
+.abbreviation-input-short {
+    font-family: var(--font-mono, monospace);
+    color: var(--clr-text-subtle);
+    width: 4.5ch;
+}
+
+.abbreviation-item-icon {
+    color: var(--clr-text-subtle);
+    margin-right: 0.5ch;
+}
+
+.abbreviation-item:has(:focus-within) {
+    .abbreviation-btn {
+        visibility: visible;
+        opacity: 1;
+        transition: all 0.25s ease-in-out;
+    }
+}
+
+input:focus {
+    outline: none;
+}
+
+/* Boutons */
+.abbreviation-btn {
+    background: none;
+    color: white;
+    border: none;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+    white-space: nowrap;
+    margin-left: auto;
+}
+
+.abbreviation-btn-delete {
+    color: var(--clr-text-subtle);
+}
+
+
+
+
+
+/* Responsive */
+@media screen and (max-width: 640px) {
+    .abbreviation-panel {
+        position: fixed;
+        top: 30%;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-height: none;
+    }
+
+    .abbreviation-item {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        gap: 0.25rem;
+    }
+
+    .abbreviation-input {
+        grid-column: 1;
+    }
+
+    .abbreviation-btn {
+        grid-column: 1;
+        justify-self: start;
+    }
+}
